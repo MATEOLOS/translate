@@ -8,14 +8,18 @@ $tr = new Translate;
 
 // $tr->google('Hello world', 'en', 'es');
 
-$res = $tr->setText('Hello world')
+$tr->setText('Hello world')
    ->setInputLang('en')
    ->setOutputLang('es')
    ->google();
 
-var_dump($res);
+
+echo 'Text translated: ' . $tr->getText() . PHP_EOL; // Text translated: Hola Mundo
+echo 'Lang code: ' . $tr->getLangName() . PHP_EOL; // Lang code: Spanish
+
 
 /*
+  var_dump($res);
   Output:
     class stdClass#5 (2) {
       public $input =>
