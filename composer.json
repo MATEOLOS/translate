@@ -1,0 +1,14 @@
+{
+    "name": "mateodioev/translate",
+    "description": "Translate text",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Mateodioev\\": "src/"
+        }
+    },
+    "require": {
+        "mateodioev/request": "dev-master"
+    }
+}
