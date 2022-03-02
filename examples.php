@@ -8,7 +8,7 @@ $tr = new Translate;
 
 // $tr->google('Hello world', 'en', 'es');
 
-$tr->setText('Hello world')
+$res = $tr->setText('Hello world')
    ->setInputLang('en')
    ->setOutputLang('es')
    ->google();
