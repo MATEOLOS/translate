@@ -117,9 +117,8 @@ class Translate {
     
 
     if (!$this->Eval()) return false;
-    Request::Init($this->getUrl(self::GOOGLE_ENDPOINT, $input_text, $source, $target));
-    Request::AddOpts([CURLOPT_PROXYPORT => 3128, CURLOPT_ENCODING => 'UTF-8', CURLOPT_USERAGENT => 'AndroidTranslate/5.3.0.RC02.130475354-53000263 5.1 phone TRANSLATE_OPM5_TEST_1']);
-    $response = Request::Run();
+    
+    $response = Request::get($this->getUrl(self::GOOGLE_ENDPOINT, $input_text, $source, $target));
 
     if (!$response['ok'] || empty($response['response'])) {
       $this->error = true;
