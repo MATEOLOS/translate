@@ -5,7 +5,7 @@ Github:
 
 ```bash
 git clone https://github.com/Mateodioev/translate
-cd request
+cd translate
 composer install
 ```
 
