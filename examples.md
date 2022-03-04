@@ -42,5 +42,5 @@ $tr->getText();
 
 ```php
 $dir = 'input or output';
-$tr->getLangName();
+$tr->getLangName($dir);
 ```
