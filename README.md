@@ -17,4 +17,4 @@ composer require mateodioev/translate
 
 ## Usage
 
-See [examples](examples.php)
+See [examples](examples.md)
