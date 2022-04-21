@@ -43,6 +43,7 @@ class Translate {
    */
   public function setInputLang(string $lang_code = 'auto')
   {
+    $lang_code = strtolower($lang_code);
     if (isset($this->langs_code[$lang_code])) {
       $this->input->lang_code = $lang_code;
       $this->input->lang_name = $this->langs_code[$lang_code];
@@ -60,6 +61,7 @@ class Translate {
    */
   public function setOutputLang(string $lang_code = 'en')
   {
+    $lang_code = strtolower($lang_code);
     if (isset($this->langs_code[$lang_code]) && $lang_code != 'auto') {
       $this->output->lang_code = $lang_code;
       $this->output->lang_name = $this->langs_code[$lang_code];
@@ -130,7 +132,7 @@ class Translate {
       $content .= $res[0][$i][0];
     }
 
-    $this->input->lang_code = $res[2];
+    $this->input->lang_code = strtolower($res[2]);
     $this->input->lang_name = $this->langs_code[$this->input->lang_code];
 
     if ($this->input->lang_code == $this->output->lang_code) {
@@ -139,7 +141,7 @@ class Translate {
       return false;
     }
     $this->output->text = $content;
-    $this->output->lang_name = $this->langs_code[$this->output->lang_code];
+    $this->output->lang_name = $this->langs_code[strtolower($this->output->lang_code)];
     return (object) [
       'input' => $this->input,
       'output' => $this->output
@@ -178,7 +180,7 @@ class Translate {
     }
 
     $langs = explode('-', $res['lang']);
-    $this->input->lang_code = $langs[0];
+    $this->input->lang_code = strtolower($langs[0]);
     $this->input->lang_name = $this->langs_code[$this->input->lang_code];
 
     if ($langs[0] == $langs[1]) {
