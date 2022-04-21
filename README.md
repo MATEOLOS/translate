@@ -1,5 +1,5 @@
 # Translate text
-
+[![CodeFactor](https://www.codefactor.io/repository/github/mateodioev/translate/badge)](https://www.codefactor.io/repository/github/mateodioev/translate)
 
 Github:
 
