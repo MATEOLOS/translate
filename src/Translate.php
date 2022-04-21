@@ -166,7 +166,7 @@ class Translate {
     }
 
     $lang = $this->input->lang_code . '-' . $this->output->lang_code;
-    if ($this->input->lang_code = 'auto') $lang = $this->output->lang_code;
+    if ($this->input->lang_code == 'auto') $lang = $this->output->lang_code;
     $url = sprintf(self::YANDEX_ENDPOINT, urlencode($api_key), urlencode($lang), urlencode($this->input->text));
     $response = Request::get($url, ["Content-Type: application/json"]);
     $res = json_decode($response['response'], true);
