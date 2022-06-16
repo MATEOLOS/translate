@@ -9,6 +9,6 @@
         }
     },
     "require": {
-        "mateodioev/request": "dev-master"
+        "mateodioev/request": "^1.0"
     }
 }
