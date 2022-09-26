@@ -3,8 +3,8 @@
 namespace Mateodioev;
 
 use Mateodioev\Request\Request;
-
 use Exception;
+use Mateodioev\Utils\Exceptions\RequestException;
 
 /**
  * Translate texts
@@ -49,7 +49,7 @@ class Translate {
       $this->input->lang_name = Langs::getName($lang_code);
       return $this;
     } else {
-      throw new Exception("Invalid input language code");
+      throw new TranslateException('Invalid input language code: "'.$lang_code.'"');
     }
   }
 
@@ -68,7 +68,7 @@ class Translate {
       $this->output->lang_name = Langs::getName($lang_code);
       return $this;
     } else {
-      throw new Exception("Invalid output language code");
+      throw new TranslateException('Invalid output language code: "'.$lang_code.'"');
     }
   }
 
@@ -118,14 +118,22 @@ class Translate {
     if (!$this->Eval()) return false;
     
     $url = sprintf(self::GOOGLE_ENDPOINT, urlencode($this->input->lang_code), urlencode($this->output->lang_code), urlencode($this->input->text));
-    $response = Request::get($url, ["Content-Type: application/json"]);
 
-    if (!$response['ok'] || empty($response['response'])) {
+    try {
+      $res = Request::get($url, [CURLOPT_HTTPHEADER => ['Content-Type: application/json']])
+      ->Run(null)->toJson(true);
+    } catch (RequestException $e) {
       $this->error = true;
-      $this->error_msg = 'Error: ' . $response['error'];
+      $this->error_msg = $e->getMessage();
       return false;
     }
-    $res = json_decode($response['response']);
+
+    if ($res->isError()) {
+      $this->error = true;
+      $this->error_msg = $res->getErrorMessage();
+      return false;
+    }
+    $res = $res->getBody();
     $lines = count($res[0]);
     $content = '';
 
@@ -171,16 +179,18 @@ class Translate {
     $lang = $this->input->lang_code . '-' . $this->output->lang_code;
     if ($this->input->lang_code == 'auto') $lang = $this->output->lang_code;
     $url = sprintf(self::YANDEX_ENDPOINT, urlencode($api_key), urlencode($lang), urlencode($this->input->text));
-    $response = Request::get($url, ["Content-Type: application/json"]);
-    $res = json_decode($response['response'], true);
 
-    if ($response['code'] != 200) {
+    $res = (new Request)->init($url, [CURLOPT_HTTPHEADER => ['Content-Type: application/json']])
+      ->Run(null)->toJson(true)
+      ->getBody();
+
+    if ($res->code != 200) {
       $this->error = true;
-      $this->error_msg = 'Error '.$res['code'].': ' . $res['message'];
+      $this->error_msg = 'Error:  '. $res->message;
       return false;
     }
 
-    $langs = explode('-', $res['lang']);
+    $langs = explode('-', $res->lang);
     $this->input->lang_code = strtolower($langs[0]);
     $this->input->lang_name = Langs::getName($this->input->lang_code);
 
@@ -190,7 +200,7 @@ class Translate {
       return false;
     }
 
-    $this->output->text = $res['text'][0];
+    $this->output->text = $res->text[0];
     $this->output->lang_name = Langs::getName($this->input->lang_code);
     return(object) [
       'input' => $this->input, 
@@ -216,4 +226,8 @@ class Translate {
     return $this->{$dir}->lang_name ?? '';
   }
 
+  public function getError(): string
+  {
+    return $this->error_msg;
+  }
 }
