@@ -15,7 +15,6 @@ class Translate {
   
   const GOOGLE_ENDPOINT = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=%s&tl=%s&dt=t&q=%s';
   const YANDEX_ENDPOINT = 'https://translate.yandex.net/api/v1.5/tr.json/translate?key=%s&lang=%s&text=%s';
-  private $langs_code = ['auto' => 'Automatic', 'af' => 'Afrikaans', 'sq' => 'Albanian', 'am' => 'Amharic', 'ar' => 'Arabic', 'hy' => 'Armenian', 'az' => 'Azerbaijani', 'eu' => 'Basque', 'be' => 'Belarusian', 'bn' => 'Bengali', 'bs' => 'Bosnian', 'bg' => 'Bulgarian', 'ca' => 'Catalan', 'ceb' => 'Cebuano', 'ny' => 'Chichewa', 'zh-cn' => 'Chinese Simplified', 'zh-tw' => 'Chinese Traditional', 'co' => 'Corsican', 'hr' => 'Croatian', 'cs' => 'Czech', 'da' => 'Danish', 'nl' => 'Dutch', 'en' => 'English', 'eo' => 'Esperanto', 'et' => 'Estonian', 'tl' => 'Filipino', 'fi' => 'Finnish', 'fr' => 'French', 'fy' => 'Frisian', 'gl' => 'Galician', 'ka' => 'Georgian', 'de' => 'German', 'el' => 'Greek', 'gu' => 'Gujarati', 'ht' => 'Haitian Creole', 'ha' => 'Hausa', 'haw' => 'Hawaiian', 'iw' => 'Hebrew', 'hi' => 'Hindi', 'hmn' => 'Hmong', 'hu' => 'Hungarian', 'is' => 'Icelandic', 'ig' => 'Igbo', 'id' => 'Indonesian', 'ga' => 'Irish', 'it' => 'Italian', 'ja' => 'Japanese', 'jw' => 'Javanese', 'kn' => 'Kannada', 'kk' => 'Kazakh', 'km' => 'Khmer', 'ko' => 'Korean', 'ku' => 'Kurdish (Kurmanji)', 'ky' => 'Kyrgyz', 'lo' => 'Lao', 'la' => 'Latin', 'lv' => 'Latvian', 'lt' => 'Lithuanian', 'lb' => 'Luxembourgish', 'mk' => 'Macedonian', 'mg' => 'Malagasy', 'ms' => 'Malay', 'ml' => 'Malayalam', 'mt' => 'Maltese', 'mi' => 'Maori', 'mr' => 'Marathi', 'mn' => 'Mongolian', 'my' => 'Myanmar (Burmese)', 'ne' => 'Nepali', 'no' => 'Norwegian', 'ps' => 'Pashto', 'fa' => 'Persian', 'pl' => 'Polish', 'pt' => 'Portuguese', 'ma' => 'Punjabi', 'ro' => 'Romanian', 'ru' => 'Russian', 'sm' => 'Samoan', 'gd' => 'Scots Gaelic', 'sr' => 'Serbian', 'st' => 'Sesotho', 'sn' => 'Shona', 'sd' => 'Sindhi', 'si' => 'Sinhala', 'sk' => 'Slovak', 'sl' => 'Slovenian', 'so' => 'Somali', 'es' => 'Spanish', 'su' => 'Sundanese', 'sw' => 'Swahili', 'sv' => 'Swedish', 'tg' => 'Tajik', 'ta' => 'Tamil', 'te' => 'Telugu', 'th' => 'Thai', 'tr' => 'Turkish', 'uk' => 'Ukrainian', 'ur' => 'Urdu', 'uz' => 'Uzbek', 'vi' => 'Vietnamese', 'cy' => 'Welsh', 'xh' => 'Xhosa', 'yi' => 'Yiddish', 'yo' => 'Yoruba', 'zu' => 'Zulu'];
 
   public object $input;
   public object $output;
@@ -30,9 +29,9 @@ class Translate {
     $this->input = new \stdClass;
     $this->output = new \stdClass;
     $this->input->lang_code = 'auto';
-    $this->input->lang_name = $this->langs_code['auto'];
+    $this->input->lang_name = Langs::getName('auto');
     $this->output->lang_code = 'en';
-    $this->output->lang_name = $this->langs_code['en'];
+    $this->output->lang_name = Langs::getName('en');
   }
 
   /**
@@ -44,9 +43,10 @@ class Translate {
   public function setInputLang(string $lang_code = 'auto')
   {
     $lang_code = strtolower($lang_code);
-    if (isset($this->langs_code[$lang_code])) {
+
+    if (Langs::getName($lang_code) !== false) {
       $this->input->lang_code = $lang_code;
-      $this->input->lang_name = $this->langs_code[$lang_code];
+      $this->input->lang_name = Langs::getName($lang_code);
       return $this;
     } else {
       throw new Exception("Invalid input language code");
@@ -62,9 +62,10 @@ class Translate {
   public function setOutputLang(string $lang_code = 'en')
   {
     $lang_code = strtolower($lang_code);
-    if (isset($this->langs_code[$lang_code]) && $lang_code != 'auto') {
+
+    if (Langs::getName($lang_code) !== false && $lang_code != 'auto') {
       $this->output->lang_code = $lang_code;
-      $this->output->lang_name = $this->langs_code[$lang_code];
+      $this->output->lang_name = Langs::getName($lang_code);
       return $this;
     } else {
       throw new Exception("Invalid output language code");
@@ -133,7 +134,7 @@ class Translate {
     }
 
     $this->input->lang_code = strtolower($res[2]);
-    $this->input->lang_name = $this->langs_code[$this->input->lang_code];
+    $this->input->lang_name = Langs::getName($this->input->lang_code);
 
     if ($this->input->lang_code == $this->output->lang_code) {
       $this->error = true;
@@ -141,7 +142,7 @@ class Translate {
       return false;
     }
     $this->output->text = $content;
-    $this->output->lang_name = $this->langs_code[strtolower($this->output->lang_code)];
+    $this->output->lang_name = Langs::getName($this->output->lang_code);
     return (object) [
       'input' => $this->input,
       'output' => $this->output
@@ -181,7 +182,7 @@ class Translate {
 
     $langs = explode('-', $res['lang']);
     $this->input->lang_code = strtolower($langs[0]);
-    $this->input->lang_name = $this->langs_code[$this->input->lang_code];
+    $this->input->lang_name = Langs::getName($this->input->lang_code);
 
     if ($langs[0] == $langs[1]) {
       $this->error = true;
@@ -190,7 +191,7 @@ class Translate {
     }
 
     $this->output->text = $res['text'][0];
-    $this->output->lang_name = $this->langs_code[$this->output->lang_code];
+    $this->output->lang_name = Langs::getName($this->input->lang_code);
     return(object) [
       'input' => $this->input, 
       'output' => $this->output
