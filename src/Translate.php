@@ -121,7 +121,7 @@ class Translate {
 
     try {
       $res = Request::get($url, [CURLOPT_HTTPHEADER => ['Content-Type: application/json']])
-      ->Run(null)->toJson(true);
+      ->Run(null)->toJson(true, true);
     } catch (RequestException $e) {
       $this->error = true;
       $this->error_msg = $e->getMessage();
@@ -173,7 +173,7 @@ class Translate {
     if (!$this->Eval()) return false;
 
     if (empty($api_key)) {
-      throw new Exception("Put your api key in the Yandex Translate API key");
+      throw new TranslateException('Put your api key in the Yandex Translate API key');
     }
 
     $lang = $this->input->lang_code . '-' . $this->output->lang_code;
