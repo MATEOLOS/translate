@@ -220,10 +220,21 @@ class Translate {
    * Get lang name
    *
    * @param string $dir input|output
+   * @deprecated Use `Translate::getLangNameInput()` or `Translate::getLangNameOutput`
    */
   public function getLangName(string $dir = 'output'): string
   {
     return $this->{$dir}->lang_name ?? '';
+  }
+
+  public function getLangNameInput(): string
+  {
+    return $this->input->lang_name ?? '';
+  }
+
+  public function getLangNameOutput(): string
+  {
+    return $this->output->lang_name ?? '';
   }
 
   public function getError(): string
